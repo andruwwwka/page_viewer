@@ -1,0 +1,50 @@
+version: "3"
+services:
+  runserver: &api_base
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.runserver
+    command: ["sh", "runserver.sh"]
+    environment:
+      - DB_PASSWORD=root
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app/
+    depends_on:
+      - db
+      - redis
+      - celery
+
+  autotests:
+    <<: *api_base
+    command: ["sh", "runtests.sh"]
+    ports: []
+
+  linter:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.linter
+    command: ["/usr/local/bin/flake8"]
+    volumes:
+      - ./:/app/
+
+  celery:
+    <<: *api_base
+    command: ["celery", "-A", "pages_viewer", "worker", "-l", "info"]
+    ports: []
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:12.2-alpine
+    environment:
+      - POSTGRES_USER=content
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=content_db
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:6.0-rc1-alpine3.11

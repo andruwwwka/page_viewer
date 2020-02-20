@@ -1,0 +1,6 @@
+[flake8]
+exclude = content/migrations,manage.py
+import-order-style = edited
+max-complexity = 10
+max-line-length = 121
+inline-quotes = '

@@ -1,0 +1,7 @@
+.git*
+.dockerignore
+docker-compose.yaml
+docker
+
+.idea
+*.pyc

@@ -1,0 +1,9 @@
+FROM python:3.8.1-alpine3.11
+
+RUN apk add postgresql-dev musl-dev gcc
+
+COPY requirements/main.txt /app/
+WORKDIR /app/
+RUN pip install -r main.txt
+
+COPY . .
